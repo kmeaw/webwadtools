@@ -210,7 +210,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		Object.keys(iwad.maps).forEach((map) => {
 			const $option = document.createElement('option');
 			$option.value = map;
-			$option.text = map;
+			$option.text = iwad.maps[map].name;
 			$mapsel.add($option);
 		});
 		map = iwad.maps[$mapsel.options[0].value];

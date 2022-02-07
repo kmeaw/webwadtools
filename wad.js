@@ -2932,8 +2932,33 @@ function asciiz(buf) {
 	return name;
 }
 
+class MapInfo {
+	constructor(data) {
+		this.maps = {};
+		let map = null;
+		ascii.decode(data).split(/\r?\n/).forEach((line) => {
+			if (/^\s*;/.exec(line)) return;
+			line = line.trim();
+			if (line.length == 0) return;
+
+			const parse_map = /^map (\d+) ("(?:[^"\\]|\\.)*")$/i.exec(line);
+			const kvint = /^(warptrans|next|cluster) (\d+)$/i.exec(line);
+
+			if (parse_map) {
+				map = {
+					id: parseInt(parse_map[1]),
+					name: JSON.parse(parse_map[2])
+				}
+				this.maps['MAP' + map.id] = map;
+			} else if (kvint) {
+				map[kvint[1]] = parseInt(kvint[2]);
+			}
+		});
+	}
+}
+
 class DoomMap {
-	constructor(iwad, data) {
+	constructor(iwad, name, data) {
 		this.iwad = iwad;
 		const vertex_data = new Int16Array(data.vertexes);
 		this.vertexes = [];
@@ -2945,6 +2970,21 @@ class DoomMap {
 			});
 		}
 		const sidedef_data = new Uint16Array(data.sidedefs);
+		this.id = name;
+		this.name = name;
+		const mapinfo = iwad.mapinfo.maps[name];
+		if (mapinfo) {
+			this.name = this.name;
+			if (mapinfo.warptrans) {
+				this.name = this.name + ' (hx#' + mapinfo.warptrans + ')';
+			}
+			if (mapinfo.name) {
+				this.name = this.name + ' ' + mapinfo.name;
+			}
+			if (mapinfo.cluster) {
+				this.name = 'Hub ' + mapinfo.cluster + ': ' + this.name;
+			}
+		}
 		this.sidedefs = [];
 		this.sectors = [];
 		for (let i = 0; i < data.sectors.byteLength - 25; i += 26) {
@@ -3310,8 +3350,13 @@ class WAD {
 		flatlist.forEach((name) => {
 			this.flats[name] = new Flat(this, name);
 		});
+		if (this.files.MAPINFO) {
+			this.mapinfo = new MapInfo(this.read_lump('MAPINFO'));
+		} else {
+			this.mapinfo = {maps: {}};
+		}
 		Object.keys(mapdata).forEach((name) => {
-			this.maps[name] = new DoomMap(this, mapdata[name]);
+			this.maps[name] = new DoomMap(this, name, mapdata[name]);
 		});
 	}
 
