@@ -3122,7 +3122,7 @@ class DoomMap {
 		this.sectors = this.sectors.sort((a,b) => a.floor.height - b.floor.height);
 		this.things = [];
 		const thingwidth = this.iwad.isHexen ? 20 : 10;
-		for (let i = 0; i - thingwidth + 1 < data.things.byteLength; i += thingwidth) {
+		for (let i = 0; i + thingwidth - 1 < data.things.byteLength; i += thingwidth) {
 			if (this.iwad.isHexen) {
 				const [x, y] = new Int16Array(data.things.slice(i + 2, i + 6));
 				const [tid, _x, _y, h0, angle, type, flags, special] = new Uint16Array(data.things.slice(i, i + 14));

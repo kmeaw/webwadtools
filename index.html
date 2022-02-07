@@ -10,6 +10,7 @@
 		<div class="nav nav-tabs" id="nav-tab" role="tablist">
 			<button class="nav-link active" id="nav-wad-tab" data-bs-toggle="tab" data-bs-target="#nav-wad" type="button" role="tab" aria-controls="nav-wad" aria-selected="true">Input</button>
 			<button class="nav-link" id="nav-map-tab" data-bs-toggle="tab" data-bs-target="#nav-map" type="button" role="tab" aria-controls="nav-map" aria-selected="true">Map</button>
+			<button class="nav-link" id="nav-things-tab" data-bs-toggle="tab" data-bs-target="#nav-things" type="button" role="tab" aria-controls="nav-things" aria-selected="true">Things</button>
 		</div>
 	</nav>
 
@@ -71,6 +72,21 @@
 					</div>
 				</div>
 			</form>
+		</div>
+
+		<div class="tab-pane fade" id="nav-things" role="tabpanel" aria-labelledby="nav-things-tab">
+			<div class="container mt=5">
+				<div class="row" id="thingheader">
+					<div class="col-sm-1" data-template="thing.id">ID</div>
+					<div class="col-sm-3" data-template="'(<a href=# data-action=jump data-x=' + thing.x + ' data-y=' + thing.y + (thing.initial_height ? ', ' + thing.initial_height : '') + '>' + thing.x + ', ' + (-thing.y) + '</a>)'">Position</div>
+					<div class="col-sm-1" data-template="thing.angle">Angle</div>
+					<div class="col-sm-1" data-template="'0x' + thing.flags.toString(16).padStart(4, '0')">Flags</div>
+					<div class="col-sm-1" data-template="thing.type">Type</div>
+				</div>
+
+				<div id="thinglist">
+				</div>
+			</div>
 		</div>
 	</div>
 	<script src="bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>

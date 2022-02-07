@@ -56,7 +56,10 @@ function trackTransforms(ctx) {
 	}
 	ctx.resetTransform = function() {
 		xform = svg.createSVGMatrix();
+		ctx.setTransform(1, 0, 0, 1, 0, 0);
+		ctx.zoom = 1.0;
 	}
+	ctx.zoom = 1.0;
 }
 
 window.addEventListener('DOMContentLoaded', (event) => {
@@ -83,6 +86,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 		if (iwad) {
 			redraw();
+			rething();
 			document.getElementById('nav-map-tab').click();
 		}
 	});
@@ -92,7 +96,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 	var lastX=$canvas.width/2, lastY=$canvas.height/2;
 
-	var dragStart,dragged;
+	var dragStart,dragged,curzoom=1;
 
 	$canvas.addEventListener('mousedown',(event) => {
 		document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
@@ -121,6 +125,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		var pt = ctx.transformedPoint(lastX,lastY);
 		ctx.translate(pt.x,pt.y);
 		var factor = Math.pow(scaleFactor,clicks);
+		ctx.zoom *= factor;
 		ctx.scale(factor,factor);
 		ctx.translate(-pt.x,-pt.y);
 		redraw();
@@ -134,7 +139,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 		lastX = $canvas.width/2;
 		lastY = $canvas.height/2;
-		scaleFactor = 1.1;
 		ctx.resetTransform();
 
 		redraw();
@@ -153,6 +157,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 	const $thing = document.getElementById('thing');
 	const $thingtype = document.getElementById('thingtype');
+	const $thinglist = document.getElementById('thinglist');
+	const $thingheader = document.getElementById('thingheader');
 	const THING_TYPES = [];
 	THING_DATA.forEach(([id, name]) => {
 		const $option = document.createElement('option');
@@ -186,8 +192,41 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		});
 	});
 
+	const rething = () => {
+		const thing_value = $thing.options[$thing.selectedIndex].value;
+		const things = map.things.filter((thing) =>
+			thing_value == 'all' ||
+			thing.type == parseInt(thing_value)).sort((thing) => thing.id);
+		$thinglist.innerHTML = '';
+		things.forEach((thing) => {
+			const $thing = $thingheader.cloneNode(true);
+			$thing.querySelectorAll('[data-template]').forEach((node) => {
+				node.innerHTML = eval(node.dataset.template);
+			});
+			$thinglist.appendChild($thing);
+		});
+		$thinglist.querySelectorAll('[data-action=jump]').forEach((jump) => {
+			jump.addEventListener('click', (event) => {
+				event.preventDefault();
+				event.stopPropagation();
+
+				document.getElementById('nav-map-tab').click();
+				const z = ctx.zoom;
+				ctx.resetTransform();
+				ctx.zoom = z;
+				ctx.scale(z, z);
+				const tl = ctx.transformedPoint(0, 0);
+				const br = ctx.transformedPoint($canvas.width, $canvas.height);
+				ctx.translate(-jump.dataset.x+(br.x+tl.x)/2, -jump.dataset.y+(br.y+tl.y)/2);
+				redraw();
+			});
+		});
+	};
+
 	$thing.addEventListener('change', (event) => {
+		if (!map) return;
 		redraw();
+		rething();
 	});
 
 	let map = null;
@@ -195,6 +234,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	$mapsel.addEventListener('change', (event) => {
 		map = iwad.maps[$mapsel.options[$mapsel.selectedIndex].value];
 		redraw();
+		rething();
 	});
 
 	const load_wad = (arrayBuffer) => {
