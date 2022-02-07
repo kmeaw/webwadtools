@@ -54,6 +54,9 @@ function trackTransforms(ctx) {
 		pt.x=x; pt.y=y;
 		return pt.matrixTransform(xform.inverse());
 	}
+	ctx.resetTransform = function() {
+		xform = svg.createSVGMatrix();
+	}
 }
 
 window.addEventListener('DOMContentLoaded', (event) => {
@@ -88,6 +91,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	const ctx = $canvas.getContext('2d');
 
 	var lastX=$canvas.width/2, lastY=$canvas.height/2;
+
 	var dragStart,dragged;
 
 	$canvas.addEventListener('mousedown',(event) => {
@@ -121,6 +125,22 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		ctx.translate(-pt.x,-pt.y);
 		redraw();
 	}
+
+	const resize = (event) => {
+		$canvas.width = Math.max(320, Math.min(window.innerWidth, 1320));
+		$canvas.height = window.innerHeight - 100;
+		$canvas.style.width = $canvas.width + 'px';
+		$canvas.style.height = $canvas.height + 'px';
+
+		lastX = $canvas.width/2;
+		lastY = $canvas.height/2;
+		scaleFactor = 1.1;
+		ctx.resetTransform();
+
+		redraw();
+	};
+	window.addEventListener('resize', resize);
+	resize();
 
 	var handleScroll = function(evt){
 		var delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;
@@ -318,7 +338,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		};
 		Promise.all(promises)
 			.then(() => {
-				redraw();
+				resize();
 				$wad_msg.innerText = '';
 			})
 			.catch((err) => {
