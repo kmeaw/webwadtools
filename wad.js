@@ -2949,7 +2949,7 @@ class MapInfo {
 					id: parseInt(parse_map[1]),
 					name: JSON.parse(parse_map[2])
 				}
-				this.maps['MAP' + map.id] = map;
+				this.maps['MAP' + map.id.toString(10).padStart(2, '0')] = map;
 			} else if (kvint) {
 				map[kvint[1]] = parseInt(kvint[2]);
 			}
