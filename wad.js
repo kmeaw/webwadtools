@@ -2941,7 +2941,7 @@ class DoomMap {
 			this.vertexes.push({
 				id: parseInt(i / 2),
 				x: vertex_data[i + 0], 
-				y: vertex_data[i + 1]
+				y: -vertex_data[i + 1]
 			});
 		}
 		const sidedef_data = new Uint16Array(data.sidedefs);
@@ -2965,7 +2965,8 @@ class DoomMap {
 				light_level: light,
 				special_type: special,
 				tag: tag,
-				sidedefs: []
+				sidedefs: [],
+				linedefs: []
 			};
 			this.sectors.push(sector);
 		}
@@ -2979,7 +2980,6 @@ class DoomMap {
 			this.sectors[sector_id].sidedefs.push(sidedef);
 			sidedef.sector = this.sectors[sector_id];
 		}
-		// TODO: linedef struct depends if IWAD is from Hexen
 		const linedef_data = new Uint16Array(data.linedefs);
 		this.linedefs = [];
 		for (let i = 0; i < linedef_data.length - 6 + this.iwad.isHexen; i += 7 + this.iwad.isHexen) {
@@ -3001,8 +3001,9 @@ class DoomMap {
 				sector: null
 			};
 			[back, front].filter((x) => x).forEach((sidedef) => sidedef.linedefs.push(linedef));
-			if (back || front) {
-				linedef.sector = (back || front).sector;
+			if (front) {
+				linedef.sector = front.sector;
+				linedef.sector.linedefs.push(linedef);
 			}
 			this.linedefs.push(linedef);
 		}
@@ -3013,9 +3014,18 @@ class DoomMap {
 				id: parseInt(i / 6),
 				from: this.vertexes[segs_data[i + 0]],
 				to: this.vertexes[segs_data[i + 1]],
-				linedef: this.linedefs[segs_data[i + 3]]
+				linedef: this.linedefs[segs_data[i + 3]],
+				direction: segs_data[i + 4]
 			};
 			this.segs.push(seg);
+			if (seg.direction == 0) {
+				seg.sidedef = seg.linedef.front;
+			} else {
+				seg.sidedef = seg.linedef.back;
+			}
+			if (seg.sidedef) {
+				seg.sector = seg.sidedef.sector;
+			}
 			seg.linedef.segs.push(seg);
 		}
 		const ssector_data = new Uint16Array(data.ssectors);
@@ -3025,12 +3035,51 @@ class DoomMap {
 				id: parseInt(i / 2),
 				segs: this.segs.slice(ssector_data[i + 1], ssector_data[i] + ssector_data[i + 1])
 			};
-			subsector.segs = subsector.segs.sort((a,b) => {
-				return a.to == b.from;
-			});
+			subsector.vertexes =
+				subsector.segs
+					.flatMap((seg) => [seg.from, seg.to])
+					.filter((v, i, s) => s.indexOf(v) == i);
+			if (subsector.vertexes.length >= 1) {
+				const m = subsector.vertexes
+					.reduce((a, b) => ({
+						x: a.x + b.x / subsector.vertexes.length,
+						y: a.y + b.y / subsector.vertexes.length
+					}), {x: 0, y: 0});
+				subsector.sector = subsector.segs[0].sector;
+				subsector.midpoint = m;
+				subsector.vertexes = subsector.vertexes.sort((a,b) =>
+					Math.atan2(a.y - m.y, a.x - m.x) -
+					Math.atan2(b.y - m.y, b.x - m.x));
+				subsector.segs = subsector.segs.sort((a,b) =>
+					subsector.vertexes.indexOf(a.from) -
+					subsector.vertexes.indexOf(b.from)
+				);
+			}
 			subsector.segs.forEach((seg) => seg.subsector = subsector);
 			this.subsectors.push(subsector);
 		}
+		this.subsectors = this.subsectors.sort((a,b) =>
+			(a.sector ? a.sector.floor.height : 0) -
+			(b.sector ? b.sector.floor.height : 0)
+		);
+		this.sectors.forEach((sector) => {
+			sector.vertexes =
+				sector.linedefs
+					.flatMap((linedef) => [linedef.from, linedef.to])
+					.filter((v, i, s) => s.indexOf(v) == i);
+			if (sector.vertexes.length >= 1) {
+				const m = sector.vertexes
+					.reduce((a, b) => ({
+						x: a.x + b.x / sector.vertexes.length,
+						y: a.y + b.y / sector.vertexes.length
+					}), {x: 0, y: 0});
+				sector.midpoint = m;
+				sector.vertexes = sector.vertexes.sort((a,b) =>
+					Math.atan2(a.y - m.y, a.x - m.x) -
+					Math.atan2(b.y - m.y, b.x - m.x));
+			}
+		});
+		this.sectors = this.sectors.sort((a,b) => a.floor.height - b.floor.height);
 		this.things = [];
 		const thingwidth = this.iwad.isHexen ? 20 : 10;
 		for (let i = 0; i - thingwidth + 1 < data.things.byteLength; i += thingwidth) {
@@ -3041,7 +3090,7 @@ class DoomMap {
 				const thing = {
 					id: parseInt(i / thingwidth),
 					x: x,
-					y: y,
+					y: -y,
 					tid: tid,
 					initial_height: h0,
 					angle: angle,
@@ -3057,7 +3106,7 @@ class DoomMap {
 				const thing = {
 					id: parseInt(i / thingwidth),
 					x: x,
-					y: y,
+					y: -y,
 					angle: angle,
 					type: type,
 					flags: flags,
@@ -3185,6 +3234,7 @@ class WAD {
 		this.arrayBuffer = arrayBuffer;
 		this.files = {};
 		this.patches = {};
+		this.flats = {};
 		this.maps = {};
 
 		const sig4 = ascii.decode(new Uint8Array(arrayBuffer, 0, 4));
@@ -3258,7 +3308,7 @@ class WAD {
 			this.patches[name] = new Patch(this, name);
 		});
 		flatlist.forEach((name) => {
-			this.patches[name] = new Flat(this, name);
+			this.flats[name] = new Flat(this, name);
 		});
 		Object.keys(mapdata).forEach((name) => {
 			this.maps[name] = new DoomMap(this, mapdata[name]);

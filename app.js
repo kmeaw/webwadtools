@@ -158,6 +158,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		Array.from($thing.options).forEach((option) => {
 			if (current == 'all' || option.classList.contains(current)) {
 				option.hidden = false;
+			} else if (option.value == 'all') {
+				option.hidden = false;
 			} else {
 				option.hidden = true;
 			}
@@ -193,6 +195,19 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		});
 		map = iwad.maps[$mapsel.options[0].value];
 
+		const flats = {};
+		const promises = map.sectors.map((sector) => {
+			if (flats[sector.floor.texture] || !iwad.flats[sector.floor.texture]) {
+				return Promise.resolve();
+			}
+
+			return createImageBitmap(
+				iwad.flats[sector.floor.texture].imageData
+			).then((bitmap) => {
+				flats[sector.floor.texture] = bitmap;
+			});
+		});
+
 		redraw = () => {
 			const tl = ctx.transformedPoint(0, 0);
 			const br = ctx.transformedPoint($canvas.width, $canvas.height);
@@ -202,31 +217,113 @@ window.addEventListener('DOMContentLoaded', (event) => {
 				return;
 			}
 
-			ctx.lineWidth = 2;
+			ctx.lineWidth = 1;
 			ctx.strokeStyle = 'black';
+			ctx.font = '15px serif';
 			
+			ctx.strokeStyle = 'black';
+			map.sectors.forEach((sector) => {
+				if (!sector.midpoint) return;
+
+				ctx.beginPath();
+				let prev = null;
+				sector.linedefs.forEach((v, i) => {
+					const {from, to} = v;
+					if (ctx.isPointInPath(from.x, from.y) && ctx.isPointInPath(to.x, to.y)) {
+						return;
+					}
+					if (!prev) {
+						ctx.moveTo(from.x, from.y);
+					}
+					ctx.lineTo(to.x, to.y);
+					prev = to;
+				});
+				ctx.closePath();
+				if (flats[sector.floor.texture]) {
+					ctx.fillStyle = ctx.createPattern(flats[sector.floor.texture], 'repeat');
+				} else {
+					ctx.fillStyle = 'rgb(0,0,16)';
+				}
+				ctx.fill();
+
+				ctx.save();
+				ctx.fillStyle = 'green';
+				ctx.strokeText('S' + sector.id, sector.midpoint.x, sector.midpoint.y);
+				ctx.strokeStyle = 'yellow';
+				ctx.strokeText('S' + sector.id, sector.midpoint.x, sector.midpoint.y);
+				ctx.restore();
+			});
+
+			ctx.font = '10px serif';
+
 			map.subsectors.forEach((subsector) => {
+				if (!subsector.midpoint) return;
+
 				ctx.save();
 				ctx.beginPath();
-				subsector.segs.forEach((seg) => {
-						ctx.moveTo(seg.from.x, seg.from.y);
-						ctx.lineTo(seg.to.x, seg.to.y);
+				subsector.vertexes.forEach((v, i) => {
+					if (i == 0) {
+						ctx.moveTo(v.x, v.y);
+					} else {
+						ctx.lineTo(v.x, v.y);
+					}
 				});
-				ctx.stroke();
+				ctx.closePath();
+				if (subsector.sector) {
+					if (flats[subsector.sector.floor.texture]) {
+						ctx.fillStyle = ctx.createPattern(flats[subsector.sector.floor.texture], 'repeat');
+					} else {
+						ctx.fillStyle = 'rgb(0,0,32)';
+					}
+					ctx.fill('evenodd');
+				} else {
+					ctx.fillStyle = 'red';
+					ctx.fill('evenodd');
+				}
+				ctx.fillStyle = 'black';
+				ctx.strokeText(subsector.id, subsector.midpoint.x, subsector.midpoint.y);
+				ctx.strokeStyle = 'white';
+				ctx.strokeText(subsector.id, subsector.midpoint.x, subsector.midpoint.y);
 				ctx.restore();
 			});
 
 			ctx.fillStyle = 'red';
+			ctx.strokeStyle = 'brown';
+
+			map.sectors.forEach((sector) => {
+				if (!sector.midpoint) return;
+
+				ctx.beginPath();
+				sector.linedefs.forEach((v, i) => {
+					const {from, to} = v;
+					ctx.moveTo(from.x, from.y);
+					ctx.lineTo(to.x, to.y);
+				});
+				ctx.stroke();
+			});
+
+			const thing_value = $thing.options[$thing.selectedIndex].value;
+
 			map.things.forEach((thing) => {
-				if (thing.type == parseInt($thing.options[$thing.selectedIndex].value)) {
+				if (thing_value == 'all' || thing.type == parseInt(thing_value)) {
 					ctx.beginPath();
 					ctx.arc(thing.x, thing.y, 5, 0, 2 * Math.PI, false);
 					ctx.fill();
+
+					ctx.beginPath();
+					ctx.arc(thing.x, thing.y, 5, 0, 2 * Math.PI, false);
+					ctx.stroke();
 				}
 			});
 		};
-		redraw();
-		$wad_msg.innerText = '';
+		Promise.all(promises)
+			.then(() => {
+				redraw();
+				$wad_msg.innerText = '';
+			})
+			.catch((err) => {
+				$wad_msg.innerText = 'ERROR: ' + err;
+			});
 	};
 
 	reader.addEventListener('load', (event) => {
