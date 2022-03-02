@@ -2960,7 +2960,14 @@ class MapInfo {
 class DoomMap {
 	constructor(iwad, name, data) {
 		this.iwad = iwad;
-		const vertex_data = new Int16Array(data.vertexes);
+		let vertex_data = new Int16Array(data.vertexes);
+		let psxfactor = 0;
+		for (let i = 0; i < vertex_data.length - 1; i += 2) {
+			if (vertex_data[i] == 0) psxfactor++;
+		}
+		if (vertex_data.length > 16 && psxfactor / vertex_data.length > 0.45) {
+			vertex_data = (new Int32Array(data.vertexes)).map((v) => v / 65536);
+		}
 		this.vertexes = [];
 		for (let i = 0; i < vertex_data.length - 1; i += 2) {
 			this.vertexes.push({
@@ -3027,9 +3034,8 @@ class DoomMap {
 			const v_to = this.vertexes[linedef_data[i + 1]];
 			const front = linedef_data[i + 5 + this.iwad.isHexen] == 0xFFFF ? null : this.sidedefs[linedef_data[i + 5 + this.iwad.isHexen]];
 			const back = linedef_data[i + 6 + this.iwad.isHexen] == 0xFFFF ? null : this.sidedefs[linedef_data[i + 6 + this.iwad.isHexen]];
-			if (!v_from || !v_to) {
-				console.log("Cannot add linedef: %d <-> %d", linedef_data[i], linedef_data[i+1]);
-				continue;
+			if (v_from === undefined || v_to === undefined) {
+				console.log("Cannot add linedef #%d: %d <-> %d", parseInt(i / 7), linedef_data[i], linedef_data[i+1]);
 			}
 			const linedef = {
 				id: parseInt(i / 7),
@@ -3295,8 +3301,8 @@ class WAD {
 		const mapdata = {};
 		let mapptr = [];
 
-		for (let offset = dir_offset; offset + 16 < arrayBuffer.byteLength; offset += 16) {
-			const [pos, size] = new Uint32Array(arrayBuffer, offset, 8);
+		for (let offset = dir_offset; offset + 16 <= arrayBuffer.byteLength; offset += 16) {
+			const [pos, size] = new Uint32Array(arrayBuffer, offset, 2);
 			const name = asciiz(arrayBuffer.slice(offset + 8, offset + 16));
 			idx++;
 
