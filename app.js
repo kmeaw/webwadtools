@@ -307,9 +307,17 @@ window.addEventListener('DOMContentLoaded', (event) => {
 				ctx.fill();
 
 				ctx.save();
-				ctx.fillStyle = 'green';
+				if (sector.special_type == 9) {
+					ctx.fillStyle = 'red';
+				} else {
+					ctx.fillStyle = 'green';
+				}
 				ctx.strokeText('S' + sector.id, sector.midpoint.x, sector.midpoint.y);
-				ctx.strokeStyle = 'yellow';
+				if (sector.special_type == 9) {
+					ctx.strokeStyle = 'blue';
+				} else {
+					ctx.strokeStyle = 'yellow';
+				}
 				ctx.strokeText('S' + sector.id, sector.midpoint.x, sector.midpoint.y);
 				ctx.restore();
 			});
