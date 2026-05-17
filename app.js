@@ -1093,16 +1093,16 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 				ctx.save();
 				ctx.fillStyle = 'red';
-				ctx.strokeText('secret S' + sector.id, sector.midpoint.x, sector.midpoint.y);
+				ctx.strokeText('S' + sector.id + ' (secret)', sector.midpoint.x, sector.midpoint.y);
 				ctx.strokeStyle = 'blue';
-				ctx.strokeText('secret S' + sector.id, sector.midpoint.x, sector.midpoint.y);
+				ctx.strokeText('S' + sector.id + ' (secret)', sector.midpoint.x, sector.midpoint.y);
 				ctx.restore();
 			});
 
 			ctx.save();
 			ctx.font = '13px serif';
 			map.sectors.forEach((sector) => {
-				if (!sector.midpoint || (!sector.tag && sector.special_type != 9)) return;
+				if (!sector.midpoint || sector.special_type == 9 || !sector.tag) return;
 				ctx.strokeStyle = 'yellow';
 				ctx.strokeText('S' + sector.id, sector.midpoint.x, sector.midpoint.y);
 				ctx.strokeStyle = 'black';
