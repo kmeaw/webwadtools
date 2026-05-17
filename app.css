@@ -35,6 +35,11 @@
 	margin: 0 auto 4px;
 }
 
+#thing-tooltip div:last-child {
+	font-size: 12px;
+	white-space: pre-line;
+}
+
 #forkongithub a {
 	background: #000;
 	color: #fff;

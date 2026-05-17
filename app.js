@@ -80,6 +80,14 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		return parseFloat(value.toFixed(2)).toString();
 	};
 
+	const escapeHtml = (value) => String(value)
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;');
+
+	const hex = (value, width = 4) => '0x' + value.toString(16).padStart(width, '0');
+
 	$wadsel.addEventListener('submit', (event) => {
 		event.stopPropagation();
 		event.preventDefault();
@@ -87,6 +95,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		load_selected_wads().then((ok) => {
 			if (ok) {
 				document.getElementById('nav-map-tab').click();
+				focusPlayerStart();
 			}
 		});
 	});
@@ -179,21 +188,19 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	const $thingTooltip = document.createElement('div');
 	const $thingTooltipCanvas = document.createElement('canvas');
 	const $thingTooltipName = document.createElement('div');
+	const $thingTooltipDetails = document.createElement('div');
 	$thingTooltip.id = 'thing-tooltip';
 	$thingTooltip.hidden = true;
 	$thingTooltip.appendChild($thingTooltipCanvas);
 	$thingTooltip.appendChild($thingTooltipName);
+	$thingTooltip.appendChild($thingTooltipDetails);
 	document.body.appendChild($thingTooltip);
 	let tooltipThing = null;
-	const THING_NAMES = {};
 	const THING_TYPES = [];
 	THING_DATA.forEach(([id, name]) => {
 		const $option = document.createElement('option');
 		if (id) {
 			$option.value = id;
-			if (!THING_NAMES[id]) {
-				THING_NAMES[id] = name;
-			}
 		} else {
 			$option.disabled = true;
 			THING_TYPES.push(name);
@@ -241,8 +248,53 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 	const thingName = (thing) => {
 		const gameNames = THING_NAMES_BY_GAME[iwad ? iwad.game : 'doom'] || {};
-		return gameNames[thing.type] || THING_NAMES[thing.type] || ('Thing ' + thing.type);
+		return gameNames[thing.type] || THING_NAMES_BY_GAME.generic[thing.type] || ('Thing ' + thing.type);
 	};
+
+	const thingTypeMarkup = (thing) =>
+		'<span title="' + thing.type + '">' + escapeHtml(thingName(thing)) + '</span>';
+
+	const thingFlagDefs = () => {
+		if (iwad && iwad.isHexen) {
+			return [
+				[0x0001, 'E', 'Easy'],
+				[0x0002, 'M', 'Medium'],
+				[0x0004, 'H', 'Hard'],
+				[0x0008, 'Amb', 'Ambush'],
+				[0x0010, 'Dorm', 'Dormant'],
+				[0x0020, 'Ftr', 'Fighter'],
+				[0x0040, 'Clr', 'Cleric'],
+				[0x0080, 'Mag', 'Mage'],
+				[0x0100, 'SP', 'Single-player'],
+				[0x0200, 'Coop', 'Cooperative'],
+				[0x0400, 'DM', 'Deathmatch']
+			];
+		}
+		return [
+			[0x0001, 'E', 'Easy'],
+			[0x0002, 'M', 'Medium'],
+			[0x0004, 'H', 'Hard'],
+			[0x0008, 'Amb', 'Ambush'],
+			[0x0010, 'Net', 'Multiplayer only'],
+			[0x0020, '!DM', 'Not deathmatch'],
+			[0x0040, '!Coop', 'Not cooperative'],
+			[0x0080, 'Friend', 'Friendly']
+		];
+	};
+
+	const decodedThingFlags = (thing, verbose = false) => {
+		const defs = thingFlagDefs();
+		const labels = defs
+			.filter(([flag]) => (thing.flags & flag) != 0)
+			.map(([, compact, long]) => verbose ? long : compact);
+		const known = defs.reduce((mask, [flag]) => mask | flag, 0);
+		const unknown = thing.flags & ~known;
+		if (unknown) labels.push(hex(unknown));
+		return labels.length ? labels.join(' ') : '-';
+	};
+
+	const thingFlagsMarkup = (thing) =>
+		'<span title="' + hex(thing.flags) + '">' + escapeHtml(decodedThingFlags(thing)) + '</span>';
 
 	const spriteCache = {};
 
@@ -299,6 +351,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	const showThingTooltip = (thing, clientX, clientY) => {
 		tooltipThing = thing;
 		$thingTooltipName.innerText = thingName(thing);
+		$thingTooltipDetails.innerText = 'Type ' + thing.type + '\nFlags ' + decodedThingFlags(thing, true) + ' (' + hex(thing.flags) + ')';
 		drawThingTooltipImage(thing);
 		$thingTooltip.style.left = (clientX + 14) + 'px';
 		$thingTooltip.style.top = (clientY + 14) + 'px';
@@ -337,6 +390,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	};
 
 	const selected = {
+		type: null,
+		item: null
+	};
+	const hoverHighlight = {
 		type: null,
 		item: null
 	};
@@ -391,7 +448,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		return !!DOOM_TELEPORT_SPECIALS[linedef.special_type];
 	};
 
-	const uniqueThings = (things) => things.filter((thing, i, all) => all.indexOf(thing) == i);
+	const uniqueItems = (items) => items.filter((item, i, all) => item && all.indexOf(item) == i);
 
 	const teleportDestinationsFor = (linedef) => {
 		if (!isTeleportLinedef(linedef)) return [];
@@ -406,7 +463,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	};
 
 	const teleportDestinationsForSector = (sector) => {
-		return uniqueThings(triggerLinesFor(sector).flatMap(teleportDestinationsFor));
+		return uniqueItems(triggerLinesFor(sector).flatMap(teleportDestinationsFor));
 	};
 
 	const jumpTo = (x, y) => {
@@ -419,6 +476,14 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		const br = ctx.transformedPoint($canvas.width, $canvas.height);
 		ctx.translate(-x+(br.x+tl.x)/2, -y+(br.y+tl.y)/2);
 		redraw();
+	};
+
+	const focusPlayerStart = () => {
+		if (!map) return;
+		const start = map.things.find((thing) => thing.type == 1);
+		if (start) {
+			jumpTo(start.x, start.y);
+		}
 	};
 
 	const describeLinedef = (linedef) => {
@@ -455,6 +520,43 @@ window.addEventListener('DOMContentLoaded', (event) => {
 			' at ' + fmtCoord(thing.x) + ', ' + fmtCoord(-thing.y);
 	};
 
+	const linkedSelection = (link) => {
+		if (link.dataset.action == 'select-sector') {
+			return {
+				type: 'sector',
+				item: map.sectors.find((s) => s.id == parseInt(link.dataset.id))
+			};
+		}
+		if (link.dataset.action == 'select-linedef') {
+			return {
+				type: 'linedef',
+				item: map.linedefs.find((l) => l.id == parseInt(link.dataset.id))
+			};
+		}
+		if (link.dataset.action == 'select-thing') {
+			return {
+				type: 'thing',
+				item: map.things.find((t) => t.id == parseInt(link.dataset.id))
+			};
+		}
+		return {type: null, item: null};
+	};
+
+	const bindSelectionLinkHover = (link) => {
+		link.addEventListener('mouseenter', (event) => {
+			const linked = linkedSelection(link);
+			if (!linked.item) return;
+			hoverHighlight.type = linked.type;
+			hoverHighlight.item = linked.item;
+			redraw();
+		});
+		link.addEventListener('mouseleave', (event) => {
+			hoverHighlight.type = null;
+			hoverHighlight.item = null;
+			redraw();
+		});
+	};
+
 	const updateSelectionInfo = () => {
 		if (!$selectionInfo) return;
 		if (!selected.item) {
@@ -469,38 +571,41 @@ window.addEventListener('DOMContentLoaded', (event) => {
 			$selectionInfo.innerHTML = describeThing(selected.item);
 		}
 		$selectionInfo.querySelectorAll('[data-action=select-sector]').forEach((link) => {
+			bindSelectionLinkHover(link);
 			link.addEventListener('click', (event) => {
 				event.preventDefault();
-				const sector = map.sectors.find((s) => s.id == parseInt(link.dataset.id));
-				if (sector) {
-					selected.type = 'sector';
-					selected.item = sector;
+				const linked = linkedSelection(link);
+				if (linked.item) {
+					selected.type = linked.type;
+					selected.item = linked.item;
 					updateSelectionInfo();
 					redraw();
 				}
 			});
 		});
 		$selectionInfo.querySelectorAll('[data-action=select-linedef]').forEach((link) => {
+			bindSelectionLinkHover(link);
 			link.addEventListener('click', (event) => {
 				event.preventDefault();
-				const linedef = map.linedefs.find((l) => l.id == parseInt(link.dataset.id));
-				if (linedef) {
-					selected.type = 'linedef';
-					selected.item = linedef;
+				const linked = linkedSelection(link);
+				if (linked.item) {
+					selected.type = linked.type;
+					selected.item = linked.item;
 					updateSelectionInfo();
 					redraw();
 				}
 			});
 		});
 		$selectionInfo.querySelectorAll('[data-action=select-thing]').forEach((link) => {
+			bindSelectionLinkHover(link);
 			link.addEventListener('click', (event) => {
 				event.preventDefault();
-				const thing = map.things.find((t) => t.id == parseInt(link.dataset.id));
-				if (thing) {
-					selected.type = 'thing';
-					selected.item = thing;
+				const linked = linkedSelection(link);
+				if (linked.item) {
+					selected.type = linked.type;
+					selected.item = linked.item;
 					updateSelectionInfo();
-					jumpTo(thing.x, thing.y);
+					jumpTo(linked.item.x, linked.item.y);
 				}
 			});
 		});
@@ -692,25 +797,28 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		ctx.stroke();
 	};
 
-	const highlightedSectors = () => {
-		if (!selected.item) return [];
-		if (selected.type == 'thing') return selected.item.sector ? [selected.item.sector] : [];
-		return selected.type == 'linedef' ? triggerSectorsFor(selected.item) : [selected.item];
+	const sectorsForSelection = (selection) => {
+		if (!selection.item) return [];
+		if (selection.type == 'thing') return selection.item.sector ? [selection.item.sector] : [];
+		return selection.type == 'linedef' ? triggerSectorsFor(selection.item) : [selection.item];
 	};
 
-	const highlightedLines = () => {
-		if (!selected.item) return [];
-		if (selected.type == 'thing') return [];
-		return selected.type == 'sector' ? triggerLinesFor(selected.item) : [selected.item];
+	const linesForSelection = (selection) => {
+		if (!selection.item || selection.type == 'thing') return [];
+		return selection.type == 'sector' ? triggerLinesFor(selection.item) : [selection.item];
 	};
 
-	const highlightedThings = () => {
-		if (!selected.item) return [];
-		if (selected.type == 'thing') return [selected.item];
-		if (selected.type == 'linedef') return teleportDestinationsFor(selected.item);
-		if (selected.type == 'sector') return teleportDestinationsForSector(selected.item);
+	const thingsForSelection = (selection) => {
+		if (!selection.item) return [];
+		if (selection.type == 'thing') return [selection.item];
+		if (selection.type == 'linedef') return teleportDestinationsFor(selection.item);
+		if (selection.type == 'sector') return teleportDestinationsForSector(selection.item);
 		return [];
 	};
+
+	const highlightedSectors = () => uniqueItems(sectorsForSelection(selected));
+	const highlightedLines = () => uniqueItems(linesForSelection(selected));
+	const highlightedThings = () => uniqueItems(thingsForSelection(selected));
 
 	const setupRedraw = () => {
 		redraw = () => {
@@ -746,6 +854,18 @@ window.addEventListener('DOMContentLoaded', (event) => {
 				ctx.restore();
 			}
 
+			const hoverSectors = hoverHighlight.type == 'sector' && hoverHighlight.item ? [hoverHighlight.item] : [];
+			if (hoverSectors.length) {
+				ctx.save();
+				ctx.lineWidth = Math.max(2, 5 / ctx.zoom);
+				ctx.strokeStyle = '#0d6efd';
+				hoverSectors.forEach((sector) => {
+					drawSectorPath(sector);
+					ctx.stroke();
+				});
+				ctx.restore();
+			}
+
 			ctx.save();
 			ctx.strokeStyle = 'brown';
 			map.linedefs.forEach(drawLinedef);
@@ -757,6 +877,15 @@ window.addEventListener('DOMContentLoaded', (event) => {
 				ctx.lineWidth = Math.max(2, 4 / ctx.zoom);
 				ctx.strokeStyle = selected.type == 'sector' ? '#0d6efd' : '#dc3545';
 				lines.forEach(drawLinedef);
+				ctx.restore();
+			}
+
+			const hoverLines = hoverHighlight.type == 'linedef' && hoverHighlight.item ? [hoverHighlight.item] : [];
+			if (hoverLines.length) {
+				ctx.save();
+				ctx.lineWidth = Math.max(3, 6 / ctx.zoom);
+				ctx.strokeStyle = '#ffc107';
+				hoverLines.forEach(drawLinedef);
 				ctx.restore();
 			}
 
@@ -782,6 +911,19 @@ window.addEventListener('DOMContentLoaded', (event) => {
 				things.forEach((thing) => {
 					ctx.beginPath();
 					ctx.arc(thing.x, thing.y, 11, 0, 2 * Math.PI, false);
+					ctx.stroke();
+				});
+				ctx.restore();
+			}
+
+			const hoverThings = hoverHighlight.type == 'thing' && hoverHighlight.item ? [hoverHighlight.item] : [];
+			if (hoverThings.length) {
+				ctx.save();
+				ctx.lineWidth = Math.max(3, 6 / ctx.zoom);
+				ctx.strokeStyle = '#ffc107';
+				hoverThings.forEach((thing) => {
+					ctx.beginPath();
+					ctx.arc(thing.x, thing.y, 15, 0, 2 * Math.PI, false);
 					ctx.stroke();
 				});
 				ctx.restore();

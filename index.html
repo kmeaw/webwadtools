@@ -47,20 +47,20 @@
 						<div class="col-sm-2">
 							<label for="difficulty">Difficulty:</label>
 						</div>
-							<div class="col-sm-4">
-								<select id="difficulty">
-									<option value="easy">I'm Too Young To Die / Hey, Not Too Rough</option>
-									<option value="medium">Hurt Me Plenty</option>
-									<option selected value="hard">Ultra-Violence / Nightmare!</option>
-								</select>
-							</div>
+						<div class="col-sm-4">
+							<select id="difficulty">
+								<option value="easy">I'm Too Young To Die / Hey, Not Too Rough</option>
+								<option value="medium">Hurt Me Plenty</option>
+								<option selected value="hard">Ultra-Violence / Nightmare!</option>
+							</select>
 						</div>
-						<div class="row">
-							<div class="col-sm-2"></div>
-							<div class="col-sm-10">
-								<label><input type="checkbox" id="netgame" /> Netgame</label>
-							</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-2"></div>
+						<div class="col-sm-10">
+							<label><input type="checkbox" id="netgame" /> Netgame</label>
 						</div>
+					</div>
 					<div class="row">
 						<div class="col-sm-12">
 							<span id="wad-msg"></span>
@@ -112,8 +112,8 @@
 					<div class="col-sm-1" data-template="thing.id">ID</div>
 					<div class="col-sm-3" data-template="'(<a href=# data-action=jump data-x=' + thing.x + ' data-y=' + thing.y + (thing.initial_height ? ', ' + fmtCoord(thing.initial_height) : '') + '>' + fmtCoord(thing.x) + ', ' + fmtCoord(-thing.y) + '</a>)'">Position</div>
 					<div class="col-sm-1" data-template="thing.angle">Angle</div>
-					<div class="col-sm-1" data-template="'0x' + thing.flags.toString(16).padStart(4, '0')">Flags</div>
-					<div class="col-sm-1" data-template="thing.type">Type</div>
+					<div class="col-sm-2" data-template="thingFlagsMarkup(thing)">Flags</div>
+					<div class="col-sm-3" data-template="thingTypeMarkup(thing)">Type</div>
 				</div>
 
 				<div id="thinglist">

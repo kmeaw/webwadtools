@@ -3082,66 +3082,34 @@ const THING_SPRITES = {
 	}
 };
 
-const THING_NAMES_BY_GAME = {
-	doom: {
-		7: 'Spiderdemon',
-		9: 'Shotgun guy',
-		16: 'Cyberdemon',
-		58: 'Spectre',
-		64: 'Arch-vile',
-		65: 'Heavy weapon dude',
-		66: 'Revenant',
-		67: 'Mancubus',
-		68: 'Arachnotron',
-		69: 'Hell knight',
-		71: 'Pain elemental',
-		72: 'Commander Keen',
-		84: 'Wolfenstein SS',
-		3001: 'Imp',
-		3002: 'Demon',
-		3003: 'Baron of Hell',
-		3004: 'Zombieman',
-		3005: 'Cacodemon',
-		3006: 'Lost soul'
-	},
-	heretic: {
-		5: 'Fire gargoyle',
-		6: 'Iron lich',
-		7: "D'Sparil",
-		9: 'Maulotaur',
-		15: "Disciple of D'Sparil",
-		45: 'Nitrogolem',
-		46: 'Nitrogolem ghost',
-		64: 'Undead warrior',
-		65: 'Undead warrior ghost',
-		66: 'Gargoyle',
-		68: 'Golem',
-		69: 'Golem ghost',
-		70: 'Weredragon',
-		90: 'Sabreclaw',
-		92: 'Ophidian'
-	},
-	hexen: {
-		31: 'Green chaos serpent',
-		34: 'Reiver',
-		107: 'Centaur',
-		114: 'Dark bishop',
-		115: 'Slaughtaur',
-		120: 'Stalker boss',
-		121: 'Stalker',
-		254: 'Death wyvern',
-		8020: 'Wendigo',
-		8080: 'Brown chaos serpent',
-		10011: 'Reiver',
-		10030: 'Ettin',
-		10060: 'Afrit',
-		10080: 'Heresiarch',
-		10100: 'Zedek',
-		10101: 'Traductus',
-		10102: 'Menelkir',
-		10200: 'Korax'
-	}
-};
+function buildThingNamesByGame() {
+	const names = {
+		generic: {},
+		doom: {},
+		heretic: {},
+		hexen: {},
+		strife: {}
+	};
+	let game = null;
+	THING_DATA.forEach(([id, name]) => {
+		if (!id) {
+			const match = /^(Doom|Heretic|Hexen|Strife)\b/.exec(name);
+			game = match ? match[1].toLowerCase() : null;
+			return;
+		}
+
+		const type = parseInt(id);
+		if (!names.generic[type]) {
+			names.generic[type] = name;
+		}
+		if (game && !names[game][type]) {
+			names[game][type] = name;
+		}
+	});
+	return names;
+}
+
+const THING_NAMES_BY_GAME = buildThingNamesByGame();
 
 function asciiz(buf) {
 	let name = ascii.decode(new Uint8Array(buf));
