@@ -3109,10 +3109,20 @@ class DoomMap {
 			(b.sector ? b.sector.floor.height : 0)
 		);
 		this.sectors.forEach((sector) => {
+			let x = 0, y = 0, n = 0;
 			sector.vertexes =
 				sector.linedefs
 					.flatMap((linedef) => [linedef.from, linedef.to])
 					.filter((v, i, s) => s.indexOf(v) == i);
+			sector.vertexes.forEach((v) => {
+				x += v.x;
+				y += v.y;
+				n++;
+			});
+			if (n > 0) {
+				sector.x = parseInt(x / n);
+				sector.y = parseInt(y / n);
+			}
 			if (sector.vertexes.length >= 1) {
 				const m = sector.vertexes
 					.reduce((a, b) => ({
@@ -3302,7 +3312,7 @@ class WAD {
 		let mapptr = [];
 
 		for (let offset = dir_offset; offset + 16 <= arrayBuffer.byteLength; offset += 16) {
-			const [pos, size] = new Uint32Array(arrayBuffer, offset, 2);
+			const [pos, size] = new Uint32Array(arrayBuffer.slice(offset, offset + 8));
 			const name = asciiz(arrayBuffer.slice(offset + 8, offset + 16));
 			idx++;
 

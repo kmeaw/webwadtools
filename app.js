@@ -87,6 +87,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		if (iwad) {
 			redraw();
 			rething();
+			resecret();
 			document.getElementById('nav-map-tab').click();
 		}
 	});
@@ -159,6 +160,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	const $thingtype = document.getElementById('thingtype');
 	const $thinglist = document.getElementById('thinglist');
 	const $thingheader = document.getElementById('thingheader');
+	const $secretlist = document.getElementById('secretlist');
+	const $secretheader = document.getElementById('secretheader');
 	const THING_TYPES = [];
 	THING_DATA.forEach(([id, name]) => {
 		const $option = document.createElement('option');
@@ -223,6 +226,34 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		});
 	};
 
+	const resecret = () => {
+		const secrets = map.sectors.filter((s) => s.special_type == 9 && s.midpoint);
+		$secretlist.innerHTML = '';
+		secrets.forEach((secret) => {
+			const $secret = $secretheader.cloneNode(true);
+			$secret.querySelectorAll('[data-template]').forEach((node) => {
+				node.innerHTML = eval(node.dataset.template);
+			});
+			$secretlist.appendChild($secret);
+		});
+		$secretlist.querySelectorAll('[data-action=jump]').forEach((jump) => {
+			jump.addEventListener('click', (event) => {
+				event.preventDefault();
+				event.stopPropagation();
+
+				document.getElementById('nav-map-tab').click();
+				const z = ctx.zoom;
+				ctx.resetTransform();
+				ctx.zoom = z;
+				ctx.scale(z, z);
+				const tl = ctx.transformedPoint(0, 0);
+				const br = ctx.transformedPoint($canvas.width, $canvas.height);
+				ctx.translate(-jump.dataset.x+(br.x+tl.x)/2, -jump.dataset.y+(br.y+tl.y)/2);
+				redraw();
+			});
+		});
+	};
+
 	$thing.addEventListener('change', (event) => {
 		if (!map) return;
 		redraw();
@@ -235,6 +266,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		map = iwad.maps[$mapsel.options[$mapsel.selectedIndex].value];
 		redraw();
 		rething();
+		resecret();
 	});
 
 	const load_wad = (arrayBuffer) => {
@@ -306,6 +338,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 				}
 				ctx.fill();
 
+				if (sector.special_type == 9) return;
 				ctx.save();
 				if (sector.special_type == 9) {
 					ctx.fillStyle = 'red';
@@ -382,6 +415,17 @@ window.addEventListener('DOMContentLoaded', (event) => {
 					ctx.arc(thing.x, thing.y, 5, 0, 2 * Math.PI, false);
 					ctx.stroke();
 				}
+			});
+
+			map.sectors.filter((s) => s.special_type == 9).forEach((sector) => {
+				if (!sector.midpoint) return;
+
+				ctx.save();
+				ctx.fillStyle = 'red';
+				ctx.strokeText('secret S' + sector.id, sector.midpoint.x, sector.midpoint.y);
+				ctx.strokeStyle = 'blue';
+				ctx.strokeText('secret S' + sector.id, sector.midpoint.x, sector.midpoint.y);
+				ctx.restore();
 			});
 		};
 		Promise.all(promises)
