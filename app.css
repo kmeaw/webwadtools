@@ -4,6 +4,37 @@
 	max-height: 100%;
 }
 
+.selection-info {
+	border: 1px solid #adb5bd;
+	background: #f8f9fa;
+	margin: 8px 0;
+	min-height: 44px;
+	padding: 8px;
+}
+
+.selection-info a {
+	margin-right: 8px;
+}
+
+#thing-tooltip {
+	position: fixed;
+	z-index: 10000;
+	pointer-events: none;
+	background: rgba(248,249,250,0.96);
+	border: 1px solid #343a40;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+	color: #111;
+	font: 13px arial,sans-serif;
+	max-width: 160px;
+	padding: 6px;
+	text-align: center;
+}
+
+#thing-tooltip canvas {
+	display: block;
+	margin: 0 auto 4px;
+}
+
 #forkongithub a {
 	background: #000;
 	color: #fff;

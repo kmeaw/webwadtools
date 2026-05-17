@@ -29,12 +29,38 @@
 					</div>
 					<div class="row">
 						<div class="col-sm-2">
+							<label for="pwads">PWADs:</label>
+						</div>
+						<div class="col-sm-10">
+							<input type="file" id="pwads" accept=".wad" multiple />
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-2">
 							<label for="mapsel">Map:</label>
 						</div>
 						<div class="col-sm-10">
 							<select id="mapsel"></select>
 						</div>
 					</div>
+					<div class="row">
+						<div class="col-sm-2">
+							<label for="difficulty">Difficulty:</label>
+						</div>
+							<div class="col-sm-4">
+								<select id="difficulty">
+									<option value="easy">I'm Too Young To Die / Hey, Not Too Rough</option>
+									<option value="medium">Hurt Me Plenty</option>
+									<option selected value="hard">Ultra-Violence / Nightmare!</option>
+								</select>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-2"></div>
+							<div class="col-sm-10">
+								<label><input type="checkbox" id="netgame" /> Netgame</label>
+							</div>
+						</div>
 					<div class="row">
 						<div class="col-sm-12">
 							<span id="wad-msg"></span>
@@ -68,6 +94,11 @@
 					</div>
 					<div class="row">
 						<div class="col-sm-12">
+							<div id="selection-info" class="selection-info">Click a linedef or sector to inspect trigger links.</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
 							<canvas id="map"></canvas>
 						</div>
 					</div>
@@ -79,7 +110,7 @@
 			<div class="container mt=5">
 				<div class="row" id="thingheader">
 					<div class="col-sm-1" data-template="thing.id">ID</div>
-					<div class="col-sm-3" data-template="'(<a href=# data-action=jump data-x=' + thing.x + ' data-y=' + thing.y + (thing.initial_height ? ', ' + thing.initial_height : '') + '>' + thing.x + ', ' + (-thing.y) + '</a>)'">Position</div>
+					<div class="col-sm-3" data-template="'(<a href=# data-action=jump data-x=' + thing.x + ' data-y=' + thing.y + (thing.initial_height ? ', ' + fmtCoord(thing.initial_height) : '') + '>' + fmtCoord(thing.x) + ', ' + fmtCoord(-thing.y) + '</a>)'">Position</div>
 					<div class="col-sm-1" data-template="thing.angle">Angle</div>
 					<div class="col-sm-1" data-template="'0x' + thing.flags.toString(16).padStart(4, '0')">Flags</div>
 					<div class="col-sm-1" data-template="thing.type">Type</div>
@@ -94,7 +125,7 @@
 			<div class="container mt=2">
 				<div class="row" id="secretheader">
 					<div class="col-sm-1" data-template="secret.id">ID</div>
-					<div class="col-sm-3" data-template="'(<a href=# data-action=jump data-x=' + secret.midpoint.x + ' data-y=' + secret.midpoint.y + '>' + secret.midpoint.x + ', ' + (-secret.midpoint.y) + '</a>)'">Position</div>
+					<div class="col-sm-3" data-template="'(<a href=# data-action=jump data-x=' + secret.midpoint.x + ' data-y=' + secret.midpoint.y + '>' + fmtCoord(secret.midpoint.x) + ', ' + fmtCoord(-secret.midpoint.y) + '</a>)'">Position</div>
 				</div>
 
 				<div id="secretlist">

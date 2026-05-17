@@ -2923,6 +2923,226 @@ const THING_DATA = [
     ],
 ]; 
 
+const THING_SPRITES = {
+	doom: {
+		1: 'PLAY',
+		2: 'PLAY',
+		3: 'PLAY',
+		4: 'PLAY',
+		5: 'BKEY',
+		6: 'YKEY',
+		7: 'SPID',
+		8: 'BPAK',
+		9: 'SPOS',
+		10: 'PLAY',
+		11: 'PLAY',
+		12: 'PLAY',
+		13: 'RKEY',
+		14: 'BON1',
+		15: 'PLAY',
+		16: 'CYBR',
+		17: 'CELP',
+		18: 'POSS',
+		19: 'SPOS',
+		20: 'TROO',
+		21: 'SARG',
+		22: 'HEAD',
+		23: 'SKUL',
+		24: 'POL5',
+		25: 'POL1',
+		26: 'POL6',
+		27: 'POL4',
+		28: 'POL2',
+		29: 'POL3',
+		30: 'COL1',
+		31: 'COL2',
+		32: 'COL3',
+		33: 'COL4',
+		34: 'CAND',
+		35: 'CBRA',
+		36: 'COL5',
+		37: 'COL6',
+		38: 'RSKU',
+		39: 'YSKU',
+		40: 'BSKU',
+		41: 'CEYE',
+		42: 'FSKU',
+		43: 'TRE1',
+		44: 'TBLU',
+		45: 'TGRN',
+		46: 'TRED',
+		47: 'SMIT',
+		48: 'ELEC',
+		49: 'GOR1',
+		50: 'GOR2',
+		51: 'GOR3',
+		52: 'GOR4',
+		53: 'GOR5',
+		54: 'TRE2',
+		55: 'SMBT',
+		56: 'SMGT',
+		57: 'SMRT',
+		58: 'SARG',
+		59: 'GOR2',
+		60: 'GOR4',
+		61: 'GOR3',
+		62: 'GOR5',
+		63: 'GOR1',
+		64: 'VILE',
+		65: 'CPOS',
+		66: 'SKEL',
+		67: 'FATT',
+		68: 'BSPI',
+		69: 'BOS2',
+		70: 'FCAN',
+		71: 'PAIN',
+		72: 'KEEN',
+		73: 'HDB1',
+		74: 'HDB2',
+		75: 'HDB3',
+		76: 'HDB4',
+		77: 'HDB5',
+		78: 'HDB6',
+		79: 'POB1',
+		80: 'POB2',
+		81: 'BRS1',
+		82: 'SGN2',
+		83: 'MEGA',
+		84: 'SSWV',
+		2001: 'SHOT',
+		2002: 'MGUN',
+		2003: 'LAUN',
+		2004: 'PLAS',
+		2005: 'CSAW',
+		2006: 'BFUG',
+		2007: 'CLIP',
+		2008: 'SHEL',
+		2010: 'ROCK',
+		2011: 'STIM',
+		2012: 'MEDI',
+		2013: 'SOUL',
+		2014: 'BON1',
+		2015: 'BON2',
+		2018: 'ARM1',
+		2019: 'ARM2',
+		2022: 'PINV',
+		2023: 'PSTR',
+		2024: 'PINS',
+		2025: 'SUIT',
+		2026: 'PMAP',
+		2045: 'PVIS',
+		2046: 'BROK',
+		2047: 'CELL',
+		2048: 'AMMO',
+		2049: 'SBOX',
+		3001: 'TROO',
+		3002: 'SARG',
+		3003: 'BOSS',
+		3004: 'POSS',
+		3005: 'HEAD',
+		3006: 'SKUL',
+		2035: 'BAR1'
+	},
+	heretic: {
+		5: 'IMPX',
+		6: 'HEAD',
+		7: 'SORC',
+		9: 'MNTR',
+		15: 'WZRD',
+		45: 'MUMM',
+		46: 'MUMM',
+		64: 'KNIG',
+		65: 'KNIG',
+		66: 'IMP',
+		68: 'MUMM',
+		69: 'MUMM',
+		70: 'BEAS',
+		90: 'CLNK',
+		92: 'SNKE'
+	},
+	hexen: {
+		31: 'DEMN',
+		34: 'WRAI',
+		107: 'CENT',
+		114: 'BISH',
+		115: 'CENT',
+		120: 'STLK',
+		121: 'STLK',
+		254: 'DRAG',
+		8020: 'ICEY',
+		8080: 'DEM2',
+		10011: 'WRAI',
+		10030: 'ETTN',
+		10060: 'FDMN',
+		10080: 'SORC',
+		10100: 'PLAY',
+		10101: 'PLAY',
+		10102: 'PLAY',
+		10200: 'KORX'
+	}
+};
+
+const THING_NAMES_BY_GAME = {
+	doom: {
+		7: 'Spiderdemon',
+		9: 'Shotgun guy',
+		16: 'Cyberdemon',
+		58: 'Spectre',
+		64: 'Arch-vile',
+		65: 'Heavy weapon dude',
+		66: 'Revenant',
+		67: 'Mancubus',
+		68: 'Arachnotron',
+		69: 'Hell knight',
+		71: 'Pain elemental',
+		72: 'Commander Keen',
+		84: 'Wolfenstein SS',
+		3001: 'Imp',
+		3002: 'Demon',
+		3003: 'Baron of Hell',
+		3004: 'Zombieman',
+		3005: 'Cacodemon',
+		3006: 'Lost soul'
+	},
+	heretic: {
+		5: 'Fire gargoyle',
+		6: 'Iron lich',
+		7: "D'Sparil",
+		9: 'Maulotaur',
+		15: "Disciple of D'Sparil",
+		45: 'Nitrogolem',
+		46: 'Nitrogolem ghost',
+		64: 'Undead warrior',
+		65: 'Undead warrior ghost',
+		66: 'Gargoyle',
+		68: 'Golem',
+		69: 'Golem ghost',
+		70: 'Weredragon',
+		90: 'Sabreclaw',
+		92: 'Ophidian'
+	},
+	hexen: {
+		31: 'Green chaos serpent',
+		34: 'Reiver',
+		107: 'Centaur',
+		114: 'Dark bishop',
+		115: 'Slaughtaur',
+		120: 'Stalker boss',
+		121: 'Stalker',
+		254: 'Death wyvern',
+		8020: 'Wendigo',
+		8080: 'Brown chaos serpent',
+		10011: 'Reiver',
+		10030: 'Ettin',
+		10060: 'Afrit',
+		10080: 'Heresiarch',
+		10100: 'Zedek',
+		10101: 'Traductus',
+		10102: 'Menelkir',
+		10200: 'Korax'
+	}
+};
+
 function asciiz(buf) {
 	let name = ascii.decode(new Uint8Array(buf));
 	const namezidx = name.indexOf('\0');
@@ -2930,6 +3150,103 @@ function asciiz(buf) {
 		name = name.substr(0, namezidx);
 	}
 	return name;
+}
+
+function dataView(buf) {
+	return new DataView(buf);
+}
+
+function u8(view, offset) {
+	return view.getUint8(offset);
+}
+
+function u16(view, offset) {
+	return view.getUint16(offset, true);
+}
+
+function i16(view, offset) {
+	return view.getInt16(offset, true);
+}
+
+function u32(view, offset) {
+	return view.getUint32(offset, true);
+}
+
+function i32(view, offset) {
+	return view.getInt32(offset, true);
+}
+
+function sameVertex(a, b) {
+	return a && b && a.id == b.id;
+}
+
+function orderedSegPath(segs) {
+	const remaining = segs.filter((seg) => seg && seg.from && seg.to).slice();
+	if (!remaining.length) return [];
+
+	const first = remaining.shift();
+	const path = [first.from, first.to];
+	while (remaining.length) {
+		const last = path[path.length - 1];
+		let found = remaining.findIndex((seg) => sameVertex(seg.from, last) || sameVertex(seg.to, last));
+		if (found == -1) {
+			const start = path[0];
+			found = remaining.findIndex((seg) => sameVertex(seg.from, start) || sameVertex(seg.to, start));
+			if (found == -1) break;
+			path.reverse();
+		}
+
+		const seg = remaining.splice(found, 1)[0];
+		const lastAfterReverse = path[path.length - 1];
+		if (sameVertex(seg.from, lastAfterReverse)) {
+			path.push(seg.to);
+		} else {
+			path.push(seg.from);
+		}
+	}
+
+	if (path.length > 1 && sameVertex(path[0], path[path.length - 1])) {
+		path.pop();
+	}
+	return path;
+}
+
+function orderedEdgePaths(edges) {
+	const remaining = edges.filter((edge) => edge && edge.from && edge.to).slice();
+	const paths = [];
+
+	while (remaining.length) {
+		const first = remaining.shift();
+		const path = [first.from, first.to];
+		while (remaining.length) {
+			const last = path[path.length - 1];
+			const firstVertex = path[0];
+			if (sameVertex(last, firstVertex)) {
+				path.pop();
+				break;
+			}
+
+			const found = remaining.findIndex((edge) =>
+				sameVertex(edge.from, last) || sameVertex(edge.to, last));
+			if (found == -1) break;
+
+			const edge = remaining.splice(found, 1)[0];
+			if (sameVertex(edge.from, last)) {
+				path.push(edge.to);
+			} else {
+				path.push(edge.from);
+			}
+		}
+
+		if (path.length > 1 && sameVertex(path[0], path[path.length - 1])) {
+			path.pop();
+		}
+		if (path.length >= 3) {
+			paths.push(path);
+		}
+	}
+
+	return paths;
 }
 
 class MapInfo {
@@ -2960,23 +3277,20 @@ class MapInfo {
 class DoomMap {
 	constructor(iwad, name, data) {
 		this.iwad = iwad;
-		let vertex_data = new Int16Array(data.vertexes);
+		const vertex_view = dataView(data.vertexes);
 		let psxfactor = 0;
-		for (let i = 0; i < vertex_data.length - 1; i += 2) {
-			if (vertex_data[i] == 0) psxfactor++;
+		for (let i = 0; i + 3 < data.vertexes.byteLength; i += 4) {
+			if (i16(vertex_view, i) == 0) psxfactor++;
 		}
-		if (vertex_data.length > 16 && psxfactor / vertex_data.length > 0.45) {
-			vertex_data = (new Int32Array(data.vertexes)).map((v) => v / 65536);
-		}
+		const is_psx = data.vertexes.byteLength > 32 && psxfactor / (data.vertexes.byteLength / 2) > 0.45;
 		this.vertexes = [];
-		for (let i = 0; i < vertex_data.length - 1; i += 2) {
+		for (let i = 0; i + (is_psx ? 7 : 3) < data.vertexes.byteLength; i += is_psx ? 8 : 4) {
 			this.vertexes.push({
-				id: parseInt(i / 2),
-				x: vertex_data[i + 0], 
-				y: -vertex_data[i + 1]
+				id: parseInt(i / (is_psx ? 8 : 4)),
+				x: is_psx ? i32(vertex_view, i) / 65536 : i16(vertex_view, i),
+				y: -(is_psx ? i32(vertex_view, i + 4) / 65536 : i16(vertex_view, i + 2))
 			});
 		}
-		const sidedef_data = new Uint16Array(data.sidedefs);
 		this.id = name;
 		this.name = name;
 		const mapinfo = iwad.mapinfo.maps[name];
@@ -2994,76 +3308,90 @@ class DoomMap {
 		}
 		this.sidedefs = [];
 		this.sectors = [];
+		const sector_view = dataView(data.sectors);
 		for (let i = 0; i < data.sectors.byteLength - 25; i += 26) {
-			const [hfloor, hceil] = new Int16Array(data.sectors.slice(i, i + 4));
 			const floor = asciiz(data.sectors.slice(i + 4, i + 12));
 			const ceil = asciiz(data.sectors.slice(i + 12, i + 20));
-			const [light, special, tag] = new Uint16Array(data.sectors.slice(i + 20, i + 26));
 			const sector = {
 				id: parseInt(i / 26),
 				floor: {
-					height: hfloor,
+					height: i16(sector_view, i),
 					texture: floor
 				},
 				ceiling: {
-					height: hceil,
+					height: i16(sector_view, i + 2),
 					texture: ceil
 				},
-				light_level: light,
-				special_type: special,
-				tag: tag,
+				light_level: u16(sector_view, i + 20),
+				special_type: u16(sector_view, i + 22),
+				tag: u16(sector_view, i + 24),
 				sidedefs: [],
 				linedefs: []
 			};
 			this.sectors.push(sector);
 		}
-		for (let i = 0; i < sidedef_data.length - 14; i += 15) {
-			const sector_id = sidedef_data[i + 14];
+		const sidedef_view = dataView(data.sidedefs);
+		for (let i = 0; i < data.sidedefs.byteLength - 29; i += 30) {
+			const sector_id = u16(sidedef_view, i + 28);
 			const sidedef = {
-				id: parseInt(i / 15),
+				id: parseInt(i / 30),
 				linedefs: []
 			};
 			this.sidedefs.push(sidedef);
-			this.sectors[sector_id].sidedefs.push(sidedef);
-			sidedef.sector = this.sectors[sector_id];
+			if (this.sectors[sector_id]) {
+				this.sectors[sector_id].sidedefs.push(sidedef);
+				sidedef.sector = this.sectors[sector_id];
+			}
 		}
-		const linedef_data = new Uint16Array(data.linedefs);
+		const linedef_view = dataView(data.linedefs);
 		this.linedefs = [];
-		for (let i = 0; i < linedef_data.length - 6 + this.iwad.isHexen; i += 7 + this.iwad.isHexen) {
-			const v_from = this.vertexes[linedef_data[i + 0]];
-			const v_to = this.vertexes[linedef_data[i + 1]];
-			const front = linedef_data[i + 5 + this.iwad.isHexen] == 0xFFFF ? null : this.sidedefs[linedef_data[i + 5 + this.iwad.isHexen]];
-			const back = linedef_data[i + 6 + this.iwad.isHexen] == 0xFFFF ? null : this.sidedefs[linedef_data[i + 6 + this.iwad.isHexen]];
+		const linedef_width = this.iwad.isHexen ? 16 : 14;
+		for (let i = 0; i < data.linedefs.byteLength - linedef_width + 1; i += linedef_width) {
+			const v_from_id = u16(linedef_view, i + 0);
+			const v_to_id = u16(linedef_view, i + 2);
+			const v_from = this.vertexes[v_from_id];
+			const v_to = this.vertexes[v_to_id];
+			const front_id = u16(linedef_view, i + (this.iwad.isHexen ? 12 : 10));
+			const back_id = u16(linedef_view, i + (this.iwad.isHexen ? 14 : 12));
+			const front = front_id == 0xFFFF ? null : this.sidedefs[front_id];
+			const back = back_id == 0xFFFF ? null : this.sidedefs[back_id];
 			if (v_from === undefined || v_to === undefined) {
-				console.log("Cannot add linedef #%d: %d <-> %d", parseInt(i / 7), linedef_data[i], linedef_data[i+1]);
+				console.log("Cannot add linedef #%d: %d <-> %d", parseInt(i / linedef_width), v_from_id, v_to_id);
 			}
 			const linedef = {
-				id: parseInt(i / 7),
+				id: parseInt(i / linedef_width),
 				from: v_from,
 				to: v_to,
+				flags: u16(linedef_view, i + 4),
+				special_type: this.iwad.isHexen ? u8(linedef_view, i + 6) : u16(linedef_view, i + 6),
+				tag: this.iwad.isHexen ? 0 : u16(linedef_view, i + 8),
+				args: this.iwad.isHexen ? Array.from(new Uint8Array(data.linedefs.slice(i + 7, i + 12))) : [],
 				back: back,
 				front: front,
 				segs: [],
 				sector: null
 			};
 			[back, front].filter((x) => x).forEach((sidedef) => sidedef.linedefs.push(linedef));
-			if (front) {
-				linedef.sector = front.sector;
-				linedef.sector.linedefs.push(linedef);
-			}
+			if (front) linedef.sector = front.sector;
+			[front, back].forEach((sidedef) => {
+				if (sidedef && sidedef.sector && !sidedef.sector.linedefs.includes(linedef)) {
+					sidedef.sector.linedefs.push(linedef);
+				}
+			});
 			this.linedefs.push(linedef);
 		}
-		const segs_data = new Uint16Array(data.segs);
+		const segs_view = dataView(data.segs);
 		this.segs = [];
-		for (let i = 0; i < segs_data.length - 5; i += 6) {
+		for (let i = 0; i < data.segs.byteLength - 11; i += 12) {
 			const seg = {
-				id: parseInt(i / 6),
-				from: this.vertexes[segs_data[i + 0]],
-				to: this.vertexes[segs_data[i + 1]],
-				linedef: this.linedefs[segs_data[i + 3]],
-				direction: segs_data[i + 4]
+				id: parseInt(i / 12),
+				from: this.vertexes[u16(segs_view, i + 0)],
+				to: this.vertexes[u16(segs_view, i + 2)],
+				linedef: this.linedefs[u16(segs_view, i + 6)],
+				direction: u16(segs_view, i + 8)
 			};
-			this.segs.push(seg);
+			if (!seg.linedef) continue;
+			this.segs[seg.id] = seg;
 			if (seg.direction == 0) {
 				seg.sidedef = seg.linedef.front;
 			} else {
@@ -3074,17 +3402,19 @@ class DoomMap {
 			}
 			seg.linedef.segs.push(seg);
 		}
-		const ssector_data = new Uint16Array(data.ssectors);
+		const ssector_view = dataView(data.ssectors);
 		this.subsectors = [];
-		for (let i = 0; i < ssector_data.length - 1; i += 2) {
+		for (let i = 0; i < data.ssectors.byteLength - 3; i += 4) {
+			const seg_count = u16(ssector_view, i);
+			const first_seg = u16(ssector_view, i + 2);
 			const subsector = {
-				id: parseInt(i / 2),
-				segs: this.segs.slice(ssector_data[i + 1], ssector_data[i] + ssector_data[i + 1])
+				id: parseInt(i / 4),
+				segs: this.segs.slice(first_seg, seg_count + first_seg).filter((seg) => seg)
 			};
-			subsector.vertexes =
-				subsector.segs
-					.flatMap((seg) => [seg.from, seg.to])
-					.filter((v, i, s) => s.indexOf(v) == i);
+			subsector.vertexes = subsector.segs
+				.flatMap((seg) => [seg.from, seg.to])
+				.filter((v, i, s) => v && s.indexOf(v) == i);
+			subsector.path = orderedSegPath(subsector.segs);
 			if (subsector.vertexes.length >= 1) {
 				const m = subsector.vertexes
 					.reduce((a, b) => ({
@@ -3093,13 +3423,6 @@ class DoomMap {
 					}), {x: 0, y: 0});
 				subsector.sector = subsector.segs[0].sector;
 				subsector.midpoint = m;
-				subsector.vertexes = subsector.vertexes.sort((a,b) =>
-					Math.atan2(a.y - m.y, a.x - m.x) -
-					Math.atan2(b.y - m.y, b.x - m.x));
-				subsector.segs = subsector.segs.sort((a,b) =>
-					subsector.vertexes.indexOf(a.from) -
-					subsector.vertexes.indexOf(b.from)
-				);
 			}
 			subsector.segs.forEach((seg) => seg.subsector = subsector);
 			this.subsectors.push(subsector);
@@ -3134,38 +3457,36 @@ class DoomMap {
 					Math.atan2(a.y - m.y, a.x - m.x) -
 					Math.atan2(b.y - m.y, b.x - m.x));
 			}
+			sector.paths = orderedEdgePaths(sector.linedefs);
 		});
 		this.sectors = this.sectors.sort((a,b) => a.floor.height - b.floor.height);
 		this.things = [];
 		const thingwidth = this.iwad.isHexen ? 20 : 10;
+		const things_view = dataView(data.things);
 		for (let i = 0; i + thingwidth - 1 < data.things.byteLength; i += thingwidth) {
 			if (this.iwad.isHexen) {
-				const [x, y] = new Int16Array(data.things.slice(i + 2, i + 6));
-				const [tid, _x, _y, h0, angle, type, flags, special] = new Uint16Array(data.things.slice(i, i + 14));
-				const args = new Uint8Array(data.things.slice(i + 14, i + 20));
+				const args = new Uint8Array(data.things.slice(i + 15, i + 20));
 				const thing = {
 					id: parseInt(i / thingwidth),
-					x: x,
-					y: -y,
-					tid: tid,
-					initial_height: h0,
-					angle: angle,
-					type: type,
-					flags: flags,
-					special: special,
+					x: i16(things_view, i + 2),
+					y: -i16(things_view, i + 4),
+					tid: u16(things_view, i),
+					initial_height: i16(things_view, i + 6),
+					angle: u16(things_view, i + 8),
+					type: u16(things_view, i + 10),
+					flags: u16(things_view, i + 12),
+					special: u8(things_view, i + 14),
 					args: args
 				};
 				this.things.push(thing);
 			} else {
-				const [x, y] = new Int16Array(data.things.slice(i, i + 4));
-				const [angle, type, flags] = new Uint16Array(data.things.slice(i + 4, i + 10));
 				const thing = {
 					id: parseInt(i / thingwidth),
-					x: x,
-					y: -y,
-					angle: angle,
-					type: type,
-					flags: flags,
+					x: i16(things_view, i),
+					y: -i16(things_view, i + 2),
+					angle: u16(things_view, i + 4),
+					type: u16(things_view, i + 6),
+					flags: u16(things_view, i + 8),
 				};
 				this.things.push(thing);
 			}
@@ -3214,8 +3535,15 @@ class Patch {
 		this.name = name;
 		this.iwad = iwad;
 		this.arrayBuffer = iwad.read_lump(name);
-		[this.width, this.height, this.leftoffset, this.topoffset] = new Uint16Array(this.arrayBuffer.slice(0, 8));
-		this.columns = new Uint32Array(this.arrayBuffer.slice(8, 8 + 4 * this.width));
+		const view = dataView(this.arrayBuffer);
+		this.width = u16(view, 0);
+		this.height = u16(view, 2);
+		this.leftoffset = u16(view, 4);
+		this.topoffset = u16(view, 6);
+		this.columns = [];
+		for (let i = 0; i < this.width; i++) {
+			this.columns.push(u32(view, 8 + 4 * i));
+		}
 		const data = new Uint8Array(this.width * this.height * 4);
 		this.columns.forEach((offset, ic) => {
 			const column = this.arrayBuffer.slice(offset);
@@ -3286,69 +3614,82 @@ const MAP_LUMPS = {
 };
 
 class WAD {
-	constructor(arrayBuffer) {
-		this.arrayBuffer = arrayBuffer;
+	constructor(arrayBuffers) {
+		if (!Array.isArray(arrayBuffers)) {
+			arrayBuffers = [arrayBuffers];
+		}
+		this.arrayBuffers = arrayBuffers;
+		this.arrayBuffer = arrayBuffers[0];
 		this.files = {};
 		this.patches = {};
 		this.flats = {};
 		this.maps = {};
 
-		const sig4 = ascii.decode(new Uint8Array(arrayBuffer, 0, 4));
-		const [lumps, dir_offset] = new Uint32Array(arrayBuffer, 4, 8);
-		if (sig4 != 'IWAD' && sig4 != 'PWAD') {
-			throw 'Bad input file header: ' + sig4;
-		}
-
-		if (dir_offset + 16 > arrayBuffer.byteLength) {
-			throw 'Bad info table offset: ' + dir_offset;
-		}
-
-		let is_patch = false;
-		let is_flat = false;
 		let idx = 0;
 		const patchlist = [];
 		const flatlist = [];
 		const mapdata = {};
-		let mapptr = [];
-
-		for (let offset = dir_offset; offset + 16 <= arrayBuffer.byteLength; offset += 16) {
-			const [pos, size] = new Uint32Array(arrayBuffer.slice(offset, offset + 8));
-			const name = asciiz(arrayBuffer.slice(offset + 8, offset + 16));
-			idx++;
-
-			if (/^S\d?_START$/.exec(name)) {
-				is_patch = true;
-				continue;
-			} else if (/^S\d?_END$/.exec(name)) {
-				is_patch = false;
-				continue;
+		arrayBuffers.forEach((arrayBuffer, wad_index) => {
+			const sig4 = ascii.decode(new Uint8Array(arrayBuffer, 0, 4));
+			const header = dataView(arrayBuffer);
+			const lumps = u32(header, 4);
+			const dir_offset = u32(header, 8);
+			if (sig4 != 'IWAD' && sig4 != 'PWAD') {
+				throw 'Bad input file header: ' + sig4;
 			}
 
-			if (/^F\d?_START$/.exec(name)) {
-				is_flat = true;
-				continue;
-			} else if (/^F\d?_END$/.exec(name)) {
-				is_flat = false;
-				continue;
+			if (dir_offset + lumps * 16 > arrayBuffer.byteLength) {
+				throw 'Bad info table offset: ' + dir_offset;
 			}
 
-			this.files[name] = {
-				pos: pos,
-				size: size,
-				index: idx,
-			};
+			let is_patch = false;
+			let is_flat = false;
+			let mapptr = null;
 
-			if (is_patch) {
-				patchlist.push(name);
-			} else if (is_flat) {
-				flatlist.push(name);
-			} else if (/^(E[0-9]M[0-9]|MAP[0-9]*)$/.exec(name)) {
-				mapptr = {};
-				mapdata[name] = mapptr;
-			} else if (MAP_LUMPS[name]) {
-				mapptr[name.toLowerCase()] = arrayBuffer.slice(pos, pos + size);
+			for (let i = 0; i < lumps; i++) {
+				const offset = dir_offset + i * 16;
+				const dir = dataView(arrayBuffer.slice(offset, offset + 16));
+				const pos = u32(dir, 0);
+				const size = u32(dir, 4);
+				const name = asciiz(arrayBuffer.slice(offset + 8, offset + 16));
+				idx++;
+
+				if (/^S\d?_START$/.exec(name)) {
+					is_patch = true;
+					continue;
+				} else if (/^S\d?_END$/.exec(name)) {
+					is_patch = false;
+					continue;
+				}
+
+				if (/^F\d?_START$/.exec(name)) {
+					is_flat = true;
+					continue;
+				} else if (/^F\d?_END$/.exec(name)) {
+					is_flat = false;
+					continue;
+				}
+
+				this.files[name] = {
+					arrayBuffer: arrayBuffer,
+					wad_index: wad_index,
+					pos: pos,
+					size: size,
+					index: idx,
+				};
+
+				if (is_patch) {
+					if (!patchlist.includes(name)) patchlist.push(name);
+				} else if (is_flat) {
+					if (!flatlist.includes(name)) flatlist.push(name);
+				} else if (/^(E[0-9]M[0-9]|MAP[0-9][0-9])$/.exec(name)) {
+					mapptr = {};
+					mapdata[name] = mapptr;
+				} else if (MAP_LUMPS[name] && mapptr) {
+					mapptr[name.toLowerCase()] = arrayBuffer.slice(pos, pos + size);
+				}
 			}
-		}
+		});
 		if (this.files.PLAYPAL) {
 			this.playpal = new Uint8Array(this.read_lump('PLAYPAL'));
 		} else {
@@ -3360,6 +3701,13 @@ class WAD {
 			}
 		}
 		this.isHexen = !!this.files.BEHAVIOR;
+		if (this.isHexen) {
+			this.game = 'hexen';
+		} else if (this.files.MUS_E1M1 || this.files.MUS_TITL || this.files.WZRD || this.files.MNTR) {
+			this.game = 'heretic';
+		} else {
+			this.game = 'doom';
+		}
 		patchlist.forEach((name) => {
 			this.patches[name] = new Patch(this, name);
 		});
@@ -3372,7 +3720,11 @@ class WAD {
 			this.mapinfo = {maps: {}};
 		}
 		Object.keys(mapdata).forEach((name) => {
-			this.maps[name] = new DoomMap(this, name, mapdata[name]);
+			if (mapdata[name].things && mapdata[name].linedefs && mapdata[name].sidedefs &&
+				mapdata[name].vertexes && mapdata[name].sectors &&
+				mapdata[name].segs && mapdata[name].ssectors) {
+				this.maps[name] = new DoomMap(this, name, mapdata[name]);
+			}
 		});
 	}
 
@@ -3381,10 +3733,10 @@ class WAD {
 		if (!file) {
 			throw 'File not found: ' + name;
 		}
-		if (file.pos + file.size > this.arrayBuffer.byteLength) {
+		if (file.pos + file.size > file.arrayBuffer.byteLength) {
 			throw 'File ' + name + ' has invalid offset or position';
 		}
-		return this.arrayBuffer.slice(file.pos, file.pos + file.size);
+		return file.arrayBuffer.slice(file.pos, file.pos + file.size);
 	}
 }
 
