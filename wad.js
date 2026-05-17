@@ -466,7 +466,7 @@ const THING_DATA = [
         "81",
         "Pool of brains"
     ],
-    [null, "Other"],
+    [null, "Doom other"],
     [
         "11",
         "Deathmatch start"

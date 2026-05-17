@@ -316,25 +316,50 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	$thingTooltip.appendChild($thingTooltipDetails);
 	document.body.appendChild($thingTooltip);
 	let tooltipThing = null;
-	const THING_TYPES = [];
-	THING_DATA.forEach(([id, name]) => {
-		const $option = document.createElement('option');
-		if (id) {
-			$option.value = id;
-		} else {
-			$option.disabled = true;
+	const populateThingCategories = (game) => {
+		$thingtype.innerHTML = '<option selected value="all">Everything</option>';
+		$thing.innerHTML = '<option selected value="all">Everything</option>';
+
+		const THING_TYPES = [];
+		let category_index = 0;
+		let skip = false;
+
+		THING_DATA.forEach(([id, name]) => {
+			if (id) {
+				if (skip) return;
+				const $option = document.createElement('option');
+				$option.value = id;
+				$option.text = name;
+				$option.classList.add('thing-type-' + category_index);
+				$thing.add($option);
+				return;
+			}
+
+			const m = /^(Doom|Heretic|Hexen|Strife)\b/.exec(name);
+			const cat_game = m ? m[1].toLowerCase() : null;
+
+			if (game && cat_game && cat_game !== game) {
+				skip = true;
+				return;
+			}
+			skip = false;
+			category_index++;
 			THING_TYPES.push(name);
-		}
-		$option.text = name;
-		$option.classList.add('thing-type-' + THING_TYPES.length);
-		$thing.add($option);
-	});
-	THING_TYPES.forEach((typ, i) => {
-		const $option = document.createElement('option');
-		$option.value = 'thing-type-' + (i + 1);
-		$option.text = typ;
-		$thingtype.add($option);
-	});
+			const $option = document.createElement('option');
+			$option.disabled = true;
+			$option.text = name;
+			$option.classList.add('thing-type-' + category_index);
+			$thing.add($option);
+		});
+
+		THING_TYPES.forEach((typ, i) => {
+			const $option = document.createElement('option');
+			$option.value = 'thing-type-' + (i + 1);
+			$option.text = typ;
+			$thingtype.add($option);
+		});
+	};
+	populateThingCategories();
 
 	$thingtype.addEventListener('change', (event) => {
 		const current = $thingtype.options[$thingtype.selectedIndex].value;
@@ -1118,6 +1143,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		}
 		window.iwad = iwad;
 		Object.keys(flats).forEach((key) => delete flats[key]);
+		populateThingCategories(iwad.game);
 
 		const selectedMap = $mapsel.value;
 		$mapsel.innerHTML = '';
