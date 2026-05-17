@@ -1,5 +1,125 @@
 'use strict';
 
+const SECTOR_SPECIAL_NAMES = {
+	doom: {
+		0: 'Normal',
+		1: 'Blink random',
+		2: 'Blink 0.5s',
+		3: 'Blink 1.0s',
+		4: '20% damage/s + blink 0.5s',
+		5: '10% damage/s',
+		7: '5% damage/s',
+		8: 'Oscillates',
+		9: 'Secret',
+		10: 'Close door (30s)',
+		11: '20% damage/s + death exit',
+		12: 'Blink 1.0s sync',
+		13: 'Blink 0.5s sync',
+		14: 'Open door (300s)',
+		16: '20% damage/s',
+		17: 'Flicker random'
+	},
+	heretic: {
+		0: 'Normal',
+		1: 'Blink random',
+		2: 'Blink 0.5s',
+		3: 'Blink 1.0s',
+		4: '5% lava/s + scroll E + blink 0.5s',
+		5: '5% lava damage/s',
+		7: '4% sludge damage/s',
+		8: 'Oscillates',
+		9: 'Secret',
+		10: 'Close door (30s)',
+		11: '(no-op)',
+		12: 'Blink 0.5s sync',
+		13: 'Blink 1.0s sync',
+		14: 'Open door (300s)',
+		15: 'Low friction',
+		16: '8% lava damage/s',
+		20: 'Scroll east 5',
+		21: 'Scroll east 10',
+		22: 'Scroll east 25',
+		23: 'Scroll east 30',
+		24: 'Scroll east 35',
+		25: 'Scroll north 5',
+		26: 'Scroll north 10',
+		27: 'Scroll north 25',
+		28: 'Scroll north 30',
+		29: 'Scroll north 35',
+		30: 'Scroll south 5',
+		31: 'Scroll south 10',
+		32: 'Scroll south 25',
+		33: 'Scroll south 30',
+		34: 'Scroll south 35',
+		35: 'Scroll west 5',
+		36: 'Scroll west 10',
+		37: 'Scroll west 25',
+		38: 'Scroll west 30',
+		39: 'Scroll west 35',
+		40: 'Push east 5',
+		41: 'Push east 10',
+		42: 'Push east 25',
+		43: 'Push north 5',
+		44: 'Push north 10',
+		45: 'Push north 25',
+		46: 'Push south 5',
+		47: 'Push south 10',
+		48: 'Push south 25',
+		49: 'Push west 5',
+		50: 'Push west 10',
+		51: 'Push west 25'
+	},
+	hexen: {
+		0: 'Normal',
+		1: 'Phased light',
+		2: 'Phased light start',
+		3: 'Light step',
+		4: 'Light step',
+		9: 'Secret',
+		26: 'Stairs normal',
+		27: 'Stairs sync',
+		40: 'Push east 5',
+		41: 'Push east 10',
+		42: 'Push east 25',
+		43: 'Push north 5',
+		44: 'Push north 10',
+		45: 'Push north 25',
+		46: 'Push south 5',
+		47: 'Push south 10',
+		48: 'Push south 25',
+		49: 'Push west 5',
+		50: 'Push west 10',
+		51: 'Push west 25',
+		198: 'Lightning +64',
+		199: 'Lightning +32',
+		200: 'Secondary sky',
+		201: 'Scroll north 5',
+		202: 'Scroll north 10',
+		203: 'Scroll north 25',
+		204: 'Scroll east 5',
+		205: 'Scroll east 10',
+		206: 'Scroll east 25',
+		207: 'Scroll south 5',
+		208: 'Scroll south 10',
+		209: 'Scroll south 25',
+		210: 'Scroll west 5',
+		211: 'Scroll west 10',
+		212: 'Scroll west 25',
+		213: 'Scroll northwest 5',
+		214: 'Scroll northwest 10',
+		215: 'Scroll northwest 25',
+		216: 'Scroll northeast 5',
+		217: 'Scroll northeast 10',
+		218: 'Scroll northeast 25',
+		219: 'Scroll southeast 5',
+		220: 'Scroll southeast 10',
+		221: 'Scroll southeast 25',
+		222: 'Scroll southwest 5',
+		223: 'Scroll southwest 10',
+		224: 'Scroll southwest 25'
+	}
+};
+
 function trackTransforms(ctx) {
 	var svg = document.createElementNS("http://www.w3.org/2000/svg",'svg');
 	var xform = svg.createSVGMatrix();
@@ -249,6 +369,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	const thingName = (thing) => {
 		const gameNames = THING_NAMES_BY_GAME[iwad ? iwad.game : 'doom'] || {};
 		return gameNames[thing.type] || THING_NAMES_BY_GAME.generic[thing.type] || ('Thing ' + thing.type);
+	};
+
+	const sectorSpecialName = (special) => {
+		const names = SECTOR_SPECIAL_NAMES[iwad ? iwad.game : 'doom'] || {};
+		return names[special];
 	};
 
 	const thingTypeMarkup = (thing) =>
@@ -508,8 +633,16 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		const destinations = teleportDestinationsForSector(sector).map((thing) =>
 			'<a href="#" data-action="select-thing" data-id="' + thing.id + '">T' + thing.id + ' ' + thingName(thing) + '</a>'
 		).join('');
-		return 'Sector S' + sector.id + ', tag ' + sector.tag +
-			(sector.special_type ? ', sector special ' + sector.special_type : '') +
+		let specialPart = '';
+		if (sector.special_type) {
+			const specialName = sectorSpecialName(sector.special_type);
+			if (specialName) {
+				specialPart = ', sector special ' + sector.special_type + ' (' + specialName + ')';
+			} else {
+				specialPart = ', sector special ' + sector.special_type;
+			}
+		}
+		return 'Sector S' + sector.id + ', tag ' + sector.tag + specialPart +
 			(links ? ', opened/changed by ' + links : ', no matching trigger linedefs found') +
 			(destinations ? ', teleport destinations ' + destinations : '');
 	};
